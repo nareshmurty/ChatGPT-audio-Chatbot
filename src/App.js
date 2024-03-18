@@ -1,25 +1,38 @@
-import logo from './logo.svg';
-import './App.css';
+import "./App.css"
+import {
+  Container,
+  Grid,
+  Box,
+  IconButton,
+  List,
+  ListItem,
+  ListItemText,
+  Paper,
+  Typography,
+} from "@mui/material"
+import { useTheme } from "@mui/material/styles"
+import { styled } from "@mui/system"
+
+import ChatHeader from "./Components/ChatHeader"
+import { useState } from "react"
+import ChatMessages from "./Components/ChatMessages"
 
 function App() {
+  const mockMessages = [
+    {
+      role: "assistant",
+      content: "Hello, how can I help you today?",
+      text: "Hello, how can I help you today?",
+    },
+  ]
+  const [messages, setMessages] = useState(mockMessages)
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    <Container maxWidth="sm" sx={{ pt: 2 }}>
+      <ChatHeader />
+      <ChatMessages messages={messages} />
+    </Container>
+  )
 }
 
-export default App;
+export default App
