@@ -7,6 +7,8 @@ import MessageInput from "./Components/MessageInput"
 import { useTheme } from "@emotion/react"
 import ThinkingBubble from "./Components/ThinkingBubble"
 import axios from "axios"
+import { IconButton } from "@mui/material"
+import VolumeUpIcon from "@mui/icons-material/VolumeUp"
 
 import AudioControl from "./Components/AudioControl"
 import ResponseFormatToggle from "./Components/ResponseFormatToggle"
@@ -75,10 +77,70 @@ function App() {
         setMessages((prevMessages) => {
           return prevMessages.filter((message) => message.key !== "thinking")
         })
+        handleBackendResponse(response)
       } catch (error) {
         console.error("Error sending text message:", error)
         alert(error)
       }
+    }
+  }
+
+  const handleBackendResponse = (response, id = null) => {
+    const generatedText = response.generated_text
+    const generatedAudio = response.generated_audio
+    const transcription = response.transcription
+
+    const audioElement = generatedAudio
+      ? new Audio(`data:audio/mpeg;base64,${generatedAudio}`)
+      : null
+
+    const AudioMessage = () => (
+      <span>
+        {generatedText}
+        {audioElement && (
+          <IconButton
+            aria-label="play-message"
+            onClick={() => {
+              audioElement.play()
+            }}
+          >
+            <VolumeUpIcon style={{ cursor: "pointer" }} fontSize="small" />
+          </IconButton>
+        )}
+      </span>
+    )
+
+    if (id) {
+      setMessage((prevMessages) => {
+        const updatedMessage = prevMessages.map((message) => {
+          if (message.id && message.id == id) {
+            return {
+              ...message,
+              content: transcription,
+            }
+          }
+          return message
+        })
+        return [
+          ...updatedMessage,
+          {
+            role: "assistant",
+            content: generatedText,
+            audio: audioElement,
+            text: <AudioMessage />,
+          },
+        ]
+      })
+    } else {
+      setMessage((prevMessages) => [
+        ...prevMessages,
+        {
+          role: "assistant",
+          content: generatedText,
+          audio: audioElement,
+          text: <AudioMessage />,
+        },
+      ])
     }
   }
 
@@ -91,12 +153,14 @@ function App() {
         filterMessageObjects={filterMessageObjects}
         messages={messages}
         setMessages={setMessages}
+        handleBackendResponse={handleBackendResponse}
       />
       <MessageInput
         message={message}
         setMessage={setMessage}
         isAudioResponse={isAudioResponse}
         handleSendMessage={handleSendMessage}
+        handleBackendResponse={handleBackendResponse}
       />
 
       <ResponseFormatToggle

@@ -12,6 +12,7 @@ function AudioControl({
   filterMessageObjects,
   messages,
   setMessages,
+  handleBackendResponse,
 }) {
   const [isRecording, setIsRecording] = useState(false)
   const [recorder, setRecorder] = useState(null)
@@ -91,6 +92,7 @@ function AudioControl({
             filterMessageObjects={filterMessageObjects}
             messages={messages}
             setMessages={setMessages}
+            handleBackendResponse={handleBackendResponse}
           />
         </Grid>
       </Box>

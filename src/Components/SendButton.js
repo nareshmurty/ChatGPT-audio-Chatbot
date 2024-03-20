@@ -14,6 +14,7 @@ function SendButton({
   messages,
   setMessages,
   isAudioResponse,
+  handleBackendResponse,
 }) {
   const theme = useTheme()
   const uploadAudio = async () => {
@@ -70,7 +71,9 @@ function SendButton({
         setMessages((prevMessage) => {
           return prevMessage.filter((message) => message.key !== "thinking")
         })
+        handleBackendResponse(response, messageId)
       }
+
       reader.readAsDataURL(audioFile)
     } catch (e) {
       console.error("Error uploading the audio file:", e)
